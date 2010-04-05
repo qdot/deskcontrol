@@ -3,39 +3,12 @@ import sys
 from PyQt4 import QtCore, QtGui
 from ravespider import *
 from ambx import *
+from TrettioLight import *
 from ui_SingleLightControlWidget import *
 from ui_RGBLightControlWidget import *
 from ui_DeskControlWidget import *
 from ui_ambxControlWidget import *
-import serial
 import time
-#class TrettioLightControlWidget(QtGui.QWidget):
-#    def __init__(self):
-        
-#########################################################################
-
-class DeskLight:
-    m_serialPort = ""
-    
-    def __init__(self, serial_port):
-        self.m_serialPort = serial.Serial(serial_port, 9600)
-        return
-
-    def connect(self):
-        self.m_serialPort.open()
-        return
-
-    def disconnect(self):
-        self.m_serialPort.close()
-
-    def setSpeed(self, index, speed):
-        command = ''.join([chr(index), chr(speed), chr(0)])
-        self.m_serialPort.write(command)
-        time.sleep(.001)
-
-    def resetCommunication(self):
-        self.setSpeed(0xff, 0xff);
-        return 
 
 #########################################################################
 
@@ -97,7 +70,8 @@ class DeskLightControlWidget(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self) 
         self.setupUi()
-        self.desktopDevice = DeskLight('/dev/tty.usbserial-A70062Nn')        
+        self.desktopDevice = FTDIDeskLight()
+        self.desktopDevice.open()
 
     def setupUi(self):
         self.layout = QtGui.QVBoxLayout()
@@ -172,8 +146,8 @@ class DeskControlDialog(QtGui.QDialog, Ui_DeskControlWidget):
     def __init__(self):
         QtGui.QDialog.__init__(self) 
         self.setupUi(self)
-        self.spiderWidget = RaveSpiderControlWidget()
-        self.deskTabLayout.addWidget(self.spiderWidget)
+        # self.spiderWidget = RaveSpiderControlWidget()
+        #self.deskTabLayout.addWidget(self.spiderWidget)
         self.deskWidget = DeskLightControlWidget()
         self.deskTabLayout.addWidget(self.deskWidget)
         self.ambxWidget = amBXControlWidget()
